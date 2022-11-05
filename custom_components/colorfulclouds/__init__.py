@@ -26,6 +26,7 @@ from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import (
     ATTR_FORECAST,
@@ -115,7 +116,7 @@ async def update_listener(hass, config_entry):
 class ColorfulcloudsDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching Colorfulclouds data API."""
 
-    def __init__(self, hass, session, api_key, api_version, location_key, longitude, latitude, dailysteps: int, hourlysteps: int, alert: bool, starttime: int):
+    def __init__(self, hass: HomeAssistant, session, api_key, api_version, location_key, longitude, latitude, dailysteps: int, hourlysteps: int, alert: bool, starttime: int):
         """Initialize."""
         self.location_key = location_key
         self.longitude = longitude
@@ -126,8 +127,7 @@ class ColorfulcloudsDataUpdateCoordinator(DataUpdateCoordinator):
         self.api_version = api_version
         self.api_key = api_key
         self.starttime = starttime
-        self.is_metric = hass.config.units.is_metric
-        if hass.config.units.is_metric:
+        if hass.config.units is METRIC_SYSTEM:
             self.is_metric = "metric:v2"
         else:
             self.is_metric = "imperial"
